@@ -15,7 +15,7 @@ from ATLAS                  import ATLASConstruction as ATLAS
 from CaloCellBuilder        import CaloHitBuilder
 from RootStreamBuilder      import RootStreamHITMaker
 
-from reco import merge_args, update_args
+from reco import merge_args, update_args, append_index_to_file
 
 
 def parse_args():
@@ -114,19 +114,10 @@ def main(logging_level: str,
 
 def run(args):
 
-    if isinstance(args.input_file, list) and not isinstance(args.input_file[0], Path):
-        args.input_file = [Path(inp) for inp in args.input_file if inp.endswith('.root')]
-
-    if not all(inp.exists() for inp in args.input_file):
-        raise FileNotFoundError(f"Input file {args.input_file} not found.")
-
-    splitted_output_filename = args.output_file.split(".")
-    print(f"splitted output file {splitted_output_filename}")
+    
     for i, input_file in enumerate(args.input_file):
-        output_file = splitted_output_filename.copy()
-        if len(args.input_file) > 1:
-            output_file.insert(-1, str(i))
-        output_file = Path('.'.join(output_file))
+               
+        output_file = Path( append_index_to_file(args.output_file) if len(args.input_file) > 1 else args.output_file )
         print(f"Output file: {output_file}")
         if output_file.exists():
             print(f"{i} - Output file {output_file} already exists. Skipping.")
@@ -152,7 +143,6 @@ def run(args):
                 traceback.format_exc()
                 sys.exit(1)
 
-        # NOTE: Run this in a separated process to avoid geant segmentation fault
         proc = Process(target=run_proc, args=(kwargs,))   
         proc.start()
         proc.join()
@@ -174,6 +164,5 @@ if __name__ == "__main__":
     if Path(args.output_file).is_dir():
         raise IsADirectoryError(f"Output file '{args.output_file}' was expected to be a file, "
                                  "but it is a directory.")
-    
     args = update_args(args)
     run(args)

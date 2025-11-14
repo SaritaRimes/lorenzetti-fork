@@ -26,7 +26,8 @@ clean:
 	docker system prune -a
 
 pull:
-	singularity pull docker://lorenzetti/lorenzetti:latest
+	mkdir -p cache
+	singularity pull --tmpdir ${PWD}/cache docker://lorenzetti/lorenzetti:latest
 
 push:
 	docker push lorenzetti/lorenzetti:latest
