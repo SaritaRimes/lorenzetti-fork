@@ -24,9 +24,8 @@ class CaloCellBuilder( Logger ):
                       InputHitsKey         = "Hits",
                       OutputCellsKey       = "Cells",
                       OutputTruthCellsKey  = "TruthCells",
+                      InputEventKey        = "Events",
                       OutputLevel          = LoggingLevel.toC('INFO'),
-                      doDefects            = False,
-                      noiseFactor          = [1],
                       ):
 
     Logger.__init__(self)
@@ -34,12 +33,11 @@ class CaloCellBuilder( Logger ):
     self.HistogramPath       = HistogramPath
     self.OutputLevel         = OutputLevel
     self.InputHitsKey        = InputHitsKey
+    self.InputEventKey       = InputEventKey
     self.OutputCellsKey      = OutputCellsKey
     self.OutputTruthCellsKey = OutputTruthCellsKey
     self.Detector            = detector
     self.OutputCollectionKeys= []
-    self.doDefects           = doDefects
-    self.noiseFactor         = noiseFactor
 
     
   def configure(self):
@@ -64,8 +62,6 @@ class CaloCellBuilder( Logger ):
                               NoiseMean       = 0.0,
                               NoiseStd        = samp.Noise,
                               StartSamplingBC = samp.StartSamplingBC, 
-                              doDefects       = self.doDefects,
-                              noiseFactor     = self.noiseFactor,
                               )
      
       if CaloFlags.DoCOF and samp.Detector == Detector.TILE: 
@@ -97,7 +93,7 @@ class CaloCellBuilder( Logger ):
       
       if CaloFlags.DoDefects:
           anomaly = AnomalyGenerator( "AnomalyGenerator_" + samp.CollectionKey,
-                                     DeadModules = AnomalyFlags.DeadModules,
+                                     InputEventKey = self.InputEventKey,
                                      NoiseMean = pulse.NoiseMean,
                                      NoiseStd = pulse.NoiseStd,
                                      BadRunListFile = AnomalyFlags.BadRunListFile)

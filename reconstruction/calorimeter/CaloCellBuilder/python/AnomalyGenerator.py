@@ -1,5 +1,5 @@
 
-__all__ = ["AnomalyGenerator", "get_cells_with_defects"]
+__all__ = ["AnomalyGenerator", "get_cells_from_brl"]
 
 
 import ROOT, json
@@ -9,12 +9,13 @@ from GaugiKernel.macros import *
 from RootStreamBuilder import RootStreamESDFlags as flags
 
 
-def get_cells_with_defects( path : str) -> List[int]:
+def get_cells_from_brl( path : str) -> List[int]:
   with open(path, 'r') as f:
     d = json.load(f)
     cells = []
     for run in d['runs']:
-      cells.extend( run['cells'] )
+      if not run["DeadModules"]:
+        cells.extend( run['Cells'] )
     return set(cells)
     
 
@@ -27,30 +28,30 @@ class AnomalyGenerator( Cpp ):
                 OutputLevel     : int=LoggingLevel.toC('INFO'), 
                 NoiseMean       : float=0,
                 NoiseStd        : float=0,
-                DeadModules     : bool=False,
+                InputEventKey   : str="Events"
               ):
                 
     Cpp.__init__(self, ROOT.AnomalyGenerator(name) )
     self.setProperty( "OutputLevel"     , OutputLevel       )
     self.setProperty( "NoiseMean"       , NoiseMean         )
     self.setProperty( "NoiseStd"        , NoiseStd          )
-    self.setProperty( "DeadModules"     , DeadModules       )
-   
+    self.setProperty( "InputEventKey"   , InputEventKey     )
+    MSG_INFO(self, f"Reading bad run list from {BadRunListFile}")
     with open(BadRunListFile, 'r') as f:
-      d = json.load(f)
-      
+      d = json.load(f)      
       events = []
-      modules = []
+      dead_modules = []
       noise_factor = []
+      cells = []
       for run in d['runs']:
         events.append( [run['StartEventNumber'], run['EndEventNumber']] ) 
-        modules.append( run['Modules'] )
-        noise_factor.append( run['NoiseFactor'] ) 
+        dead_modules.append( run['DeadModules'] )
+        noise_factor.append( run['NoiseStdFactor'] ) 
+        cells.append( run['Cells'] )
           
-
-    self.setProperty( "Modules"         , cellHash        )
-    self.setProperty( "NoiseFactor"     , noiseFactor     )
-    self.setProperty( "Events"          , noisyEvents     )
+      self.setProperty( "DeadModules"       , dead_modules )
+      self.setProperty( "Cells"             , cells        )
+      self.setProperty( "NoiseStdFactor"    , noise_factor )
+      self.setProperty( "EventNumberRange"  , events       )
 
  
-     

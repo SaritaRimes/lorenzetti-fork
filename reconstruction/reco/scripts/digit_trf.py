@@ -29,7 +29,7 @@ def parse_args():
                         help="The output level messenger.")
     
     parser.add_argument('--pre-init', action='store',
-                        dest='pre_exec', required=False, default="''",
+                        dest='pre_init', required=False, default="''",
                         help="The preinit command")
 
     parser.add_argument('--pre-exec', action='store',
@@ -78,17 +78,14 @@ def main(events : List[int],
 
     reader.merge(acc)
 
-    # digitalization!
-    noisefactor = len(flags.noisyEvents)*[args.noiseFactor]
-    
+    # digitalization!    
     calorimeter = CaloCellBuilder("CaloCellBuilder", ATLAS(),
                                   HistogramPath="Expert/Cells",
                                   OutputLevel=outputLevel,
                                   InputHitsKey=recordable("Hits"),
                                   OutputCellsKey=recordable("Cells"),
                                   OutputTruthCellsKey=recordable("TruthCells"),
-                                  doDefects=args.doDefects,
-                                  noiseFactor=noisefactor,
+                                  InputEventKey=recordable("Events"),
     )
     calorimeter.merge(acc)
 

@@ -48,9 +48,15 @@ def parse_args():
                         dest='output_level', required=False,
                         type=str, default='INFO',
                         help="The output level messenger.")
-    parser.add_argument('-p', '--pre-exec', action='store',
+    parser.add_argument('--pre-init', action='store',
+                        dest='pre_init', required=False, default="''",
+                        help="The preinit command")
+    parser.add_argument('--pre-exec', action='store',
                         dest='pre_exec', required=False, default="''",
                         help="The preexec command")
+    parser.add_argument('--post-exec', action='store',
+                        dest='post_exec', required=False, default="''",
+                        help="The postexec command")
     parser.add_argument('--save-all-hits', action='store_true',
                         dest='save_all_hits', required=False,
                         help="Save all hits into the output file.")
@@ -63,7 +69,9 @@ def parse_args():
 def main(logging_level: str,
          input_file: str | Path,
          output_file: str | Path,
-         command: str,
+         pre_init: str,
+         pre_exec: str,
+         post_exec: str,
          enable_magnetic_field: bool,
          save_all_hits : bool,
          timeout: int,
@@ -79,7 +87,7 @@ def main(logging_level: str,
 
     
     outputLevel = LoggingLevel.toC(logging_level)
-
+    exec(pre_init)
     detector = ATLAS(UseMagneticField=enable_magnetic_field)
 
     acc = ComponentAccumulator("ComponentAccumulator", detector,
@@ -109,13 +117,13 @@ def main(logging_level: str,
                              InputEventKey=recordable("Events"),
                              InputTruthKey=recordable("Particles"),
                              InputSeedsKey=recordable("Seeds"),
-                             #KeepCells = None,
                              )
     acc += HIT
     
-    exec(command)
+    exec(pre_exec)
     if not dry_run:
         acc.run(number_of_events)
+        exec(post_exec)
 
 
 
@@ -140,7 +148,9 @@ if __name__ == "__main__":
              logging_level         = args.output_level,
              input_file            = args.input_file,
              output_file           = args.output_file,
-             command               = args.pre_exec,
+             pre_init              = args.pre_init,
+             pre_exec              = args.pre_exec,
+             post_exec             = args.post_exec,
              enable_magnetic_field = args.enable_magnetic_field,
              save_all_hits         = args.save_all_hits,
              timeout               = args.timeout,
@@ -148,3 +158,6 @@ if __name__ == "__main__":
              number_of_threads     = args.number_of_threads,
              dry_run               = args.dry_run,
         )
+
+
+

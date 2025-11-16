@@ -1,5 +1,5 @@
 
-__all__ = ["CaloFlags", "CrossTalkFlags"]
+__all__ = ["CaloFlags", "CrossTalkFlags", "AnomalyFlags"]
 
 
 from GaugiKernel import EnumStringification
@@ -24,4 +24,4 @@ class CrossTalkFlags(EnumStringification):
     AmpResistive      = 1.0
     
 class AnomalyFlags(EnumStringification):
-    DeadModules    = True
+    BadRunListFile   = ""

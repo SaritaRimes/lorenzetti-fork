@@ -20,40 +20,19 @@ class AnomalyGenerator : public Gaugi::AlgTool
 
     virtual StatusCode execute( SG::EventContext &ctx, Gaugi::EDM * ) const override;
 
-    
-
 
   private:
 
-    void ReadShaper( std::string );
-    void GenerateDeterministicPulse(  std::vector<float> &pulse,  float amplitude, float phase, float lag) const;
     void AddGaussianNoise( std::vector<float> &pulse, float noiseMean, float noiseStddev) const;
 
-
-    /*! Number of samples to be generated */
-    int m_nsamples;
-    int m_startSamplingBC;
-    int m_shaperZeroIndex;
-    float m_pedestal;
-    float m_deformationMean;
-    float m_deformationStd;
-    float m_samplingRate;
-    float m_shaperResolution;
     float m_noiseMean;    
     float m_noiseStd;    
+    std::vector<bool> m_deadModules;
+    std::vector<std::vector<int>> m_cells;
+    std::vector<std::vector<int>> m_eventNumberRange;
+    std::vector<float> m_noiseStdFactor;
 
-    // new for including cell defects
-    bool m_doDefects; 
-    bool m_deadModules;
-    std::vector<std::vector<int>> m_cellHash;
-    std::vector<float> m_noiseFactor;
-    std::vector<std::vector<int>> m_noisyEvents;
-    
-    std::vector<float> m_shaper;
-    std::vector<float> m_timeSeries;
-    
-    /*! The shaper configuration path */
-    std::string m_shaperFile;
+    std::string m_inputEventKey;
     /*! Output level message */
     int m_outputLevel;
     /*! Random generator */
