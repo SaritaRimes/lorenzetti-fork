@@ -37,10 +37,10 @@ Details are given in [Reconstruction](docs/Reconstruction.md).
 
 ## Manual:
 
-- [Getting Started](docs/Getting_Started.md)
-- [Reconstruction](docs/Reconstruction.md)
-- [Visualization](docs/Visualization.md)
+- [Installation](docs/installation.md)
+- [Event geneation](docs/generation.ipynb)
 - [Simulation](docs/simulation.html)
+- [Visualization (Extra)](docs/Visualization.md)
 
 
 ## Software considerations:
