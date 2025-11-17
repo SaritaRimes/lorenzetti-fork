@@ -40,6 +40,7 @@ Details are given in [Reconstruction](docs/Reconstruction.md).
 - [Getting Started](docs/Getting_Started.md)
 - [Reconstruction](docs/Reconstruction.md)
 - [Visualization](docs/Visualization.md)
+- [Simulation](docs/simulation.html)
 
 
 ## Software considerations:
