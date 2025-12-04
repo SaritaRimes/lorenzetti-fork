@@ -2,13 +2,10 @@
 __all__ = ["PulseGenerator"]
 
 
-import ROOT, json
+import ROOT
 from typing import List
 from GaugiKernel import Cpp, LoggingLevel
 from GaugiKernel.macros import *
-from RootStreamBuilder import RootStreamESDFlags as flags
-
-
 
 
 class PulseGenerator( Cpp ):
