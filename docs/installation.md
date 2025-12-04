@@ -55,6 +55,8 @@ xhost +
 ```
 > **Note:** For security, remember to revoke access after your session by running `xhost -`.
 
+> **Note:** To run the event display, use the command `run_vis.py`
+
 
 ## 🛠️ Manual Installation (Inside the Container)
 
