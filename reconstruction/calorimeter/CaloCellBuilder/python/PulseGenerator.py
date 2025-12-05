@@ -10,7 +10,6 @@ from GaugiKernel.macros import *
 
 class PulseGenerator( Cpp ):
 
-
   def __init__( self, name      : str,
                 OutputLevel     : int=LoggingLevel.toC('INFO'), 
                 NSamples        : int=0, 
