@@ -54,6 +54,7 @@ jobs:
         shell: bash
         run: |
           cd lorenzetti && source build/lzt_setup.sh
+          simu_trf.py -i mb.EVT.root -o mb.HIT.root -nt 1
           merge_trf.py -i Zee.HIT.root --low-pileup-files mb.HIT.root --high-pileup-files mb.HIT.root --pileup-avg 0 --pileup-sigma 0 -o Zee.merged.HIT.root
 
 
@@ -67,8 +68,7 @@ jobs:
         shell: bash
         run: |
           cd lorenzetti && source build/lzt_setup.sh
-          cd .github/workflows/tests
-          source test_digit_trf.sh
+          digi_trf.py -i Zee.HIT.root -o Zee.ESD.root
               
   reconstruction:
     runs-on: self-hosted
@@ -80,8 +80,7 @@ jobs:
         shell: bash
         run: |
           cd lorenzetti && source build/lzt_setup.sh
-          cd .github/workflows/tests
-          source test_reco_trf.sh
+          reco_trf.py -i Zee.ESD.root -o Zee.AOD.root
 
 
 
