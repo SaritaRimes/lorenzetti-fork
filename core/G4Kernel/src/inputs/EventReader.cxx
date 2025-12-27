@@ -3,7 +3,7 @@
 #include "EventInfo/SeedContainer.h"
 #include "TruthParticle/TruthParticleContainer.h"
 #include "G4Kernel/inputs/EventReader.h"
-#include "G4Kernel/ComponentAccumulator.h"
+#include "G4Kernel/RunSequence.h"
 
 
 #include "G4LorentzVector.hh"
@@ -189,7 +189,7 @@ void EventReader::GeneratePrimaryVertex( G4Event* anEvent )
   clear();
   m_evt = anEvent->GetEventID();
   
-  ComponentAccumulator *reco = static_cast<ComponentAccumulator*> (G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  RunSequence *reco = static_cast<RunSequence*> (G4RunManager::GetRunManager()->GetNonConstCurrentRun());
 
   if ( m_evt <  m_ttree->GetEntries() && m_filename!="" ){
     m_ttree->GetEntry(m_evt);
@@ -233,7 +233,7 @@ bool EventReader::CheckVertexInsideWorld(const G4ThreeVector& pos) const
 
 int EventReader::Load( G4Event* g4event )
 {
-  ComponentAccumulator *reco = static_cast<ComponentAccumulator*> (G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  RunSequence *reco = static_cast<RunSequence*> (G4RunManager::GetRunManager()->GetNonConstCurrentRun());
 
   SG::WriteHandle<xAOD::TruthParticleContainer>  particles(m_truthKey, reco->getContext());
   particles.record( std::unique_ptr<xAOD::TruthParticleContainer>( new xAOD::TruthParticleContainer() ) );

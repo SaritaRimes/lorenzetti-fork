@@ -1,5 +1,5 @@
-#ifndef Gaugi_ComponentAccumulator_h 
-#define Gaugi_ComponentAccumulator_h
+#ifndef ComponentAccumulator_h 
+#define ComponentAccumulator_h
 
 #include "GaugiKernel/MsgStream.h"
 #include "GaugiKernel/Algorithm.h"

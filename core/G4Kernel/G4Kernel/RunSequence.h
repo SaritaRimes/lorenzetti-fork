@@ -1,5 +1,5 @@
-#ifndef ComponentAccumulator_h 
-#define ComponentAccumulator_h
+#ifndef RunSequence_h 
+#define RunSequence_h
 
 #include "GaugiKernel/DataHandle.h"
 #include "GaugiKernel/MsgStream.h"
@@ -12,15 +12,15 @@
 #include <string>
 #include <vector>
 
-class ComponentAccumulator : public G4Run, public MsgService
+class RunSequence : public G4Run, public MsgService
 {
   public:
 
     /** Constructor **/
-    ComponentAccumulator( int numberOfThreads, int timeout, std::vector<Gaugi::Algorithm*>, std::string output );
+    RunSequence( int numberOfThreads, int timeout, std::vector<Gaugi::Algorithm*>, std::string output );
     
     /** Destructor **/
-    virtual ~ComponentAccumulator();
+    virtual ~RunSequence();
     
     /** Used in Geant core, Loop event **/
 

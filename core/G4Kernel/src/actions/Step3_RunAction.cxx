@@ -1,5 +1,5 @@
 
-#include "G4Kernel/ComponentAccumulator.h"
+#include "G4Kernel/RunSequence.h"
 #include "G4Kernel/actions/Step3_RunAction.h"
 
 #include "G4Run.hh"
@@ -33,8 +33,8 @@ Step3_RunAction::~Step3_RunAction()
 
 G4Run* Step3_RunAction::GenerateRun()
 {
-  MSG_INFO("Creating the ComponentAccumulator..");
-  return new ComponentAccumulator(m_numberOfThreads, m_timeout, m_acc, m_output);
+  MSG_INFO("Creating the RunSequence..");
+  return new RunSequence(m_numberOfThreads, m_timeout, m_acc, m_output);
 }
 
 

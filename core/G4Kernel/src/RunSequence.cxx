@@ -1,5 +1,5 @@
 
-#include "G4Kernel/ComponentAccumulator.h"
+#include "G4Kernel/RunSequence.h"
 #include "GaugiKernel/Timer.h"
 #include "G4Threading.hh"
 #include "G4SystemOfUnits.hh"
@@ -11,10 +11,10 @@
 
 
 
-ComponentAccumulator::ComponentAccumulator( int numberOfThreads, int timeout,
+RunSequence::RunSequence( int numberOfThreads, int timeout,
                                             std::vector<Gaugi::Algorithm*> acc , 
                                             std::string output ): 
-  IMsgService("ComponentAccumulator"),
+  IMsgService("RunSequence"),
   G4Run(), 
   m_store( output + "." + std::to_string(G4Threading::G4GetThreadId()) ),
   m_ctx( "EventContext" ),
@@ -39,7 +39,7 @@ ComponentAccumulator::ComponentAccumulator( int numberOfThreads, int timeout,
 
 //!=====================================================================
 
-ComponentAccumulator::~ComponentAccumulator()
+RunSequence::~RunSequence()
 {
   m_store.cd("Event");
   /*
@@ -59,9 +59,9 @@ ComponentAccumulator::~ComponentAccumulator()
 
 //!=====================================================================
 
-void ComponentAccumulator::BeginOfEvent()
+void RunSequence::BeginOfEvent()
 {
-  MSG_INFO("ComponentAccumulator::BeginOfEvent...");
+  MSG_INFO("RunSequence::BeginOfEvent...");
   
   m_stepCounter=0;
   
@@ -92,7 +92,7 @@ void ComponentAccumulator::BeginOfEvent()
 
 //!=====================================================================
 
-void ComponentAccumulator::ExecuteEvent( const G4Step* step )
+void RunSequence::ExecuteEvent( const G4Step* step )
 {
   m_stepCounter++;
   float edep = (float)step->GetTotalEnergyDeposit()/MeV;
@@ -118,7 +118,7 @@ void ComponentAccumulator::ExecuteEvent( const G4Step* step )
 
 //!=====================================================================
 
-void ComponentAccumulator::EndOfEvent()
+void RunSequence::EndOfEvent()
 {
 
   
@@ -126,7 +126,7 @@ void ComponentAccumulator::EndOfEvent()
   
   timer.start();
   if (!m_lock){
-    MSG_INFO("ComponentAccumulator::EndOfEvent...");
+    MSG_INFO("RunSequence::EndOfEvent...");
     for( auto &toolHandle : m_toolHandles){
       MSG_DEBUG( "Launching post execute step for " << toolHandle->name() );
       if (toolHandle->post_execute( m_ctx ).isFailure() ){
@@ -159,7 +159,7 @@ void ComponentAccumulator::EndOfEvent()
 
 //!=====================================================================
 
-void ComponentAccumulator::bookHistograms(){
+void RunSequence::bookHistograms(){
 
   m_store.cd();
   m_store.mkdir( "Event" );
@@ -175,26 +175,26 @@ void ComponentAccumulator::bookHistograms(){
 
 //!=====================================================================
 
-SG::EventContext & ComponentAccumulator::getContext()
+SG::EventContext & RunSequence::getContext()
 {
   return m_ctx;
 }
 
 //!=====================================================================
 
-bool ComponentAccumulator::timeout(){
+bool RunSequence::timeout(){
   return m_timeout.resume() > m_event_timeout ? true : false;
 }
 
 //!=====================================================================
 
-void ComponentAccumulator::lock(){
+void RunSequence::lock(){
   m_lock=true;
 }
 
 //!=====================================================================
 
-void ComponentAccumulator::unlock(){
+void RunSequence::unlock(){
   m_lock=false;
 }
 
