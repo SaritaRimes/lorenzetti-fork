@@ -1,5 +1,5 @@
 
-#include "generic/GenericCalorimeterDetectorConstruction.h"
+#include "DetectorConstruction.h"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -32,10 +32,10 @@ template <typename T> int sign(T val) {
 }
 }
 
-G4ThreadLocal G4GlobalMagFieldMessenger* GenericCalorimeterDetectorConstruction::m_magFieldMessenger = nullptr;
+G4ThreadLocal G4GlobalMagFieldMessenger* DetectorConstruction::m_magFieldMessenger = nullptr;
 
 
-GenericCalorimeterDetectorConstruction::GenericCalorimeterDetectorConstruction(std::string name)
+DetectorConstruction::DetectorConstruction(std::string name)
  : 
   IMsgService(name), 
    G4VUserDetectorConstruction(),
@@ -47,7 +47,7 @@ GenericCalorimeterDetectorConstruction::GenericCalorimeterDetectorConstruction(s
 }
 
 
-GenericCalorimeterDetectorConstruction::~GenericCalorimeterDetectorConstruction()
+DetectorConstruction::~DetectorConstruction()
 {;}
 
 
@@ -55,7 +55,7 @@ GenericCalorimeterDetectorConstruction::~GenericCalorimeterDetectorConstruction(
 //
 // Add volume
 //
-void GenericCalorimeterDetectorConstruction::AddVolume(std::string region,
+void DetectorConstruction::AddVolume(std::string region,
                                         int plates,
                                         std::string absorberMaterial,
                                         std::string gapMaterial,
@@ -81,7 +81,7 @@ void GenericCalorimeterDetectorConstruction::AddVolume(std::string region,
 
 
 
-G4VPhysicalVolume* GenericCalorimeterDetectorConstruction::Construct()
+G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   // Define materials
   DefineMaterials();
@@ -183,7 +183,7 @@ G4VPhysicalVolume* GenericCalorimeterDetectorConstruction::Construct()
 }
 
 
-void GenericCalorimeterDetectorConstruction::DefineMaterials()
+void DetectorConstruction::DefineMaterials()
 {
   // Lead material defined using NIST Manager
   G4NistManager* nistManager = G4NistManager::Instance();
@@ -220,7 +220,7 @@ void GenericCalorimeterDetectorConstruction::DefineMaterials()
 
 
 
-void GenericCalorimeterDetectorConstruction::CreateHorizontalPlates(  G4LogicalVolume *worldLV, 
+void DetectorConstruction::CreateHorizontalPlates(  G4LogicalVolume *worldLV, 
                                                     std::string name,  
                                                     G4Material *defaultMaterial,
                                                     G4Material *absorberMaterial,
@@ -238,7 +238,7 @@ void GenericCalorimeterDetectorConstruction::CreateHorizontalPlates(  G4LogicalV
   if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
     G4ExceptionDescription msg;
     msg << "Cannot retrieve materials already defined.";
-    G4Exception("GenericCalorimeterDetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
+    G4Exception("DetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
   }
 
 
@@ -359,7 +359,7 @@ void GenericCalorimeterDetectorConstruction::CreateHorizontalPlates(  G4LogicalV
 }
 
 
-void GenericCalorimeterDetectorConstruction::CreateVerticalPlates(  G4LogicalVolume *worldLV, 
+void DetectorConstruction::CreateVerticalPlates(  G4LogicalVolume *worldLV, 
                                                   std::string name,  
                                                   G4Material *defaultMaterial,
                                                   G4Material *absorberMaterial,
@@ -377,7 +377,7 @@ void GenericCalorimeterDetectorConstruction::CreateVerticalPlates(  G4LogicalVol
   if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
     G4ExceptionDescription msg;
     msg << "Cannot retrieve materials already defined.";
-    G4Exception("GenericCalorimeterDetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
+    G4Exception("DetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
   }
 
   const bool evenNofLayers = !(nofLayers % 2);
@@ -516,7 +516,7 @@ void GenericCalorimeterDetectorConstruction::CreateVerticalPlates(  G4LogicalVol
 
 
 
-void GenericCalorimeterDetectorConstruction::ConstructSDandField(){
+void DetectorConstruction::ConstructSDandField(){
 
   if (m_useMagneticField){
     MSG_INFO("Set magnetic field")
@@ -535,7 +535,7 @@ void GenericCalorimeterDetectorConstruction::ConstructSDandField(){
 
 
 
-G4Region* GenericCalorimeterDetectorConstruction::GetRegion( std::string name ){
+G4Region* DetectorConstruction::GetRegion( std::string name ){
   auto reg = G4RegionStore::GetInstance()->GetRegion(name);
   return reg ? reg : new G4Region(name);
 }

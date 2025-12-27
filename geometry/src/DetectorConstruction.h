@@ -1,5 +1,5 @@
-#ifndef GenericCalorimeterDetectorConstruction_h
-#define GenericCalorimeterDetectorConstruction_h
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h
 
 #include "GaugiKernel/MsgStream.h"
 #include "GaugiKernel/Property.h"
@@ -20,7 +20,7 @@ class G4VPhysicalVolume;
 
 class G4GlobalMagFieldMessenger;
 
-class GenericCalorimeterDetectorConstruction : public G4VUserDetectorConstruction, public MsgService, public Gaugi::PropertyService
+class DetectorConstruction : public G4VUserDetectorConstruction, public MsgService, public Gaugi::PropertyService
 {
   public:
 
@@ -46,8 +46,8 @@ class GenericCalorimeterDetectorConstruction : public G4VUserDetectorConstructio
       double photonCut;
     };
 
-    GenericCalorimeterDetectorConstruction(std::string);
-    virtual ~GenericCalorimeterDetectorConstruction();
+    DetectorConstruction(std::string);
+    virtual ~DetectorConstruction();
     virtual G4VPhysicalVolume* Construct();
     virtual void ConstructSDandField();
 
