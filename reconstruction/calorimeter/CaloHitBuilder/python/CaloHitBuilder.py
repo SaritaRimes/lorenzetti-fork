@@ -2,7 +2,7 @@
 __all__ = ["CaloHitBuilder"]
 
 from GaugiKernel import Logger, LoggingLevel
-from GaugiKernel.macros import *
+from GaugiKernel.macros import MSG_INFO
 from CaloHitBuilder import CaloHitMaker
 from CaloHitBuilder import CaloHitMerge
 from G4Kernel import ComponentAccumulator
