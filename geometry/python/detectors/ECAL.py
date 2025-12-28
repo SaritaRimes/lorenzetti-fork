@@ -14,7 +14,7 @@ from geometry.SensitiveDetector import SensitiveDetector
 def getLArBarrelCfg():
 
 
-  basepath = os.environ['LORENZETTI_ATLAS_DATA_DIR']
+  basepath = os.environ['LORENZETTI_GEOMETRY_DATA_DIR']
 
   # ECal
   ecal_barrel_start = 0*m

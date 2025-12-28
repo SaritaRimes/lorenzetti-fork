@@ -18,7 +18,7 @@ def getLArEMECCfg(left_side=False):
 
     sign = -1 if left_side else 1
     side_name = 'B' if left_side else 'A'
-    basepath = os.environ['LORENZETTI_ATLAS_DATA_DIR']
+    basepath = os.environ['LORENZETTI_GEOMETRY_DATA_DIR']
 
     endcap_start    = 3704.*mm
     ps_endcap_start = endcap_start + 31*mm

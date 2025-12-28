@@ -18,7 +18,7 @@ import os
 
 def getTileBarrelCfg():
 
-    basepath = os.environ['LORENZETTI_ATLAS_DATA_DIR']
+    basepath = os.environ['LORENZETTI_GEOMETRY_DATA_DIR']
 
     # TileCal 
     endcap_start = 3704.*mm
