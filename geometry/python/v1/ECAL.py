@@ -6,9 +6,9 @@ import os
 from CaloCell.CaloDefs import Detector, CaloSampling
 from GaugiKernel.constants import m,cm,mm,MeV,pi
 
-from geometry.Calorimeter import Calorimeter
-from geometry.PhysicalVolume import PhysicalVolume, Plates
-from geometry.SensitiveDetector import SensitiveDetector
+from .Calorimeter import Calorimeter
+from .PhysicalVolume import PhysicalVolume, Plates
+from .SensitiveDetector import SensitiveDetector
 
 
 def getLArBarrelCfg():

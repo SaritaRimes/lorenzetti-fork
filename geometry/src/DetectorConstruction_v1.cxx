@@ -1,5 +1,5 @@
 
-#include "DetectorConstruction.h"
+#include "DetectorConstruction_v1.h"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -32,10 +32,10 @@ template <typename T> int sign(T val) {
 }
 }
 
-G4ThreadLocal G4GlobalMagFieldMessenger* DetectorConstruction::m_magFieldMessenger = nullptr;
+G4ThreadLocal G4GlobalMagFieldMessenger* DetectorConstruction_v1::m_magFieldMessenger = nullptr;
 
 
-DetectorConstruction::DetectorConstruction(std::string name)
+DetectorConstruction_v1::DetectorConstruction_v1(std::string name)
  : 
   IMsgService(name), 
    G4VUserDetectorConstruction(),
@@ -47,7 +47,7 @@ DetectorConstruction::DetectorConstruction(std::string name)
 }
 
 
-DetectorConstruction::~DetectorConstruction()
+DetectorConstruction_v1::~DetectorConstruction_v1()
 {;}
 
 
@@ -55,7 +55,7 @@ DetectorConstruction::~DetectorConstruction()
 //
 // Add volume
 //
-void DetectorConstruction::AddVolume(std::string region,
+void DetectorConstruction_v1::AddVolume(std::string region,
                                         int plates,
                                         std::string absorberMaterial,
                                         std::string gapMaterial,
@@ -81,7 +81,7 @@ void DetectorConstruction::AddVolume(std::string region,
 
 
 
-G4VPhysicalVolume* DetectorConstruction::Construct()
+G4VPhysicalVolume* DetectorConstruction_v1::Construct()
 {
   // Define materials
   DefineMaterials();
@@ -183,7 +183,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 }
 
 
-void DetectorConstruction::DefineMaterials()
+void DetectorConstruction_v1::DefineMaterials()
 {
   // Lead material defined using NIST Manager
   G4NistManager* nistManager = G4NistManager::Instance();
@@ -220,7 +220,7 @@ void DetectorConstruction::DefineMaterials()
 
 
 
-void DetectorConstruction::CreateHorizontalPlates(  G4LogicalVolume *worldLV, 
+void DetectorConstruction_v1::CreateHorizontalPlates(  G4LogicalVolume *worldLV, 
                                                     std::string name,  
                                                     G4Material *defaultMaterial,
                                                     G4Material *absorberMaterial,
@@ -238,7 +238,7 @@ void DetectorConstruction::CreateHorizontalPlates(  G4LogicalVolume *worldLV,
   if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
     G4ExceptionDescription msg;
     msg << "Cannot retrieve materials already defined.";
-    G4Exception("DetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
+    G4Exception("DetectorConstruction_v1::DefineVolumes()", "MyCode0001", FatalException, msg);
   }
 
 
@@ -359,7 +359,7 @@ void DetectorConstruction::CreateHorizontalPlates(  G4LogicalVolume *worldLV,
 }
 
 
-void DetectorConstruction::CreateVerticalPlates(  G4LogicalVolume *worldLV, 
+void DetectorConstruction_v1::CreateVerticalPlates(  G4LogicalVolume *worldLV, 
                                                   std::string name,  
                                                   G4Material *defaultMaterial,
                                                   G4Material *absorberMaterial,
@@ -377,7 +377,7 @@ void DetectorConstruction::CreateVerticalPlates(  G4LogicalVolume *worldLV,
   if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
     G4ExceptionDescription msg;
     msg << "Cannot retrieve materials already defined.";
-    G4Exception("DetectorConstruction::DefineVolumes()", "MyCode0001", FatalException, msg);
+    G4Exception("DetectorConstruction_v1::DefineVolumes()", "MyCode0001", FatalException, msg);
   }
 
   const bool evenNofLayers = !(nofLayers % 2);
@@ -516,7 +516,7 @@ void DetectorConstruction::CreateVerticalPlates(  G4LogicalVolume *worldLV,
 
 
 
-void DetectorConstruction::ConstructSDandField(){
+void DetectorConstruction_v1::ConstructSDandField(){
 
   if (m_useMagneticField){
     MSG_INFO("Set magnetic field")
@@ -535,7 +535,7 @@ void DetectorConstruction::ConstructSDandField(){
 
 
 
-G4Region* DetectorConstruction::GetRegion( std::string name ){
+G4Region* DetectorConstruction_v1::GetRegion( std::string name ){
   auto reg = G4RegionStore::GetInstance()->GetRegion(name);
   return reg ? reg : new G4Region(name);
 }

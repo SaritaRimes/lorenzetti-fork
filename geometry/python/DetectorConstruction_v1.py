@@ -1,5 +1,5 @@
 __all__ = [
-           "DetectorConstruction", 
+           "DetectorConstruction_v1", 
            ]
 
 
@@ -14,12 +14,12 @@ from GaugiKernel.constants import *
 from GaugiKernel import Cpp
 from GaugiKernel.macros import *
 
-from geometry.PhysicalVolume          import Plates
-from geometry.detectors.ECAL          import getLArBarrelCfg
-from geometry.detectors.TILE          import getTileBarrelCfg, getTileExtendedCfg
-from geometry.detectors.EMEC          import getLArEMECCfg
-from geometry.detectors.HEC           import getHECCfg
-from geometry.detectors.DeadMaterials import getDMVolumesCfg, getCrackVolumesCfg
+from geometry.v1.PhysicalVolume   import Plates
+from geometry.v1.ECAL             import getLArBarrelCfg
+from geometry.v1.TILE             import getTileBarrelCfg, getTileExtendedCfg
+from geometry.v1.EMEC             import getLArEMECCfg
+from geometry.v1.HEC              import getHECCfg
+from geometry.v1.DeadMaterials    import getDMVolumesCfg, getCrackVolumesCfg
 #from geometry.detectors.Tracking      import *
 
 
@@ -34,7 +34,7 @@ def flatten(nested_list : List) -> List:
   return result
 
 
-class DetectorConstruction( Cpp ):
+class DetectorConstruction_v1( Cpp ):
 
   def __init__( self, 
                 name              : str, 
@@ -42,7 +42,7 @@ class DetectorConstruction( Cpp ):
                 CutOnPhi          : bool=False,
               ):
 
-    Cpp.__init__(self, ROOT.DetectorConstruction(name) ) 
+    Cpp.__init__(self, ROOT.DetectorConstruction_v1(name) ) 
     
     self.setProperty( "UseMagneticField", UseMagneticField  )
     self.setProperty( "CutOnPhi"        , CutOnPhi          )
@@ -172,7 +172,7 @@ class DetectorConstruction( Cpp ):
 
 
 if __name__ == "__main__":
-    atlas = DetectorConstruction("ATLAS")
+    atlas = DetectorConstruction_v1("ATLAS")
     atlas.summary()
     #atlas.compile()
     #pprint(atlas.create_visualization_commands())

@@ -12,7 +12,7 @@ from RootStreamBuilder  import RootStreamHITReader, recordable
 from RootStreamBuilder  import RootStreamESDMaker
 
 from reco.reco_job import merge_args, update_args, create_parallel_job
-from geometry import DetectorConstruction
+from geometry import DetectorConstruction_v1
 
 def parse_args():
     # create the top-level parser
@@ -77,7 +77,8 @@ def main(events : List[int],
     reader.merge(acc)
 
     # digitalization!    
-    calorimeter = CaloCellBuilder("CaloCellBuilder", DetectorConstruction("ATLAS"),
+    calorimeter = CaloCellBuilder("CaloCellBuilder", 
+                                  DetectorConstruction_v1("ATLAS"),
                                   HistogramPath="Expert/Cells",
                                   OutputLevel=outputLevel,
                                   InputHitsKey=recordable("Hits"),

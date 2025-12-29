@@ -11,7 +11,7 @@ from RootStreamBuilder      import recordable
 from CaloHitBuilder         import CaloHitBuilder
 from RootStreamBuilder      import RootStreamHITMaker
 
-from geometry import DetectorConstruction
+from geometry import DetectorConstruction_v1
 from reco import update_args_from_file,merge_args_from_file
 
 
@@ -85,9 +85,9 @@ def main(logging_level: str,
     
     outputLevel = LoggingLevel.toC(logging_level)
     exec(pre_init)
-    detector = DetectorConstruction( "ATLAS", UseMagneticField=enable_magnetic_field)
 
-    acc = ComponentAccumulator("ComponentAccumulator", detector,
+    acc = ComponentAccumulator("ComponentAccumulator", 
+                               DetectorConstruction_v1( "ATLAS", UseMagneticField=enable_magnetic_field),
                                NumberOfThreads=number_of_threads,
                                OutputFile=output_file,
                                Timeout=timeout * MINUTES)

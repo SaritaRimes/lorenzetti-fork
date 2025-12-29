@@ -2,7 +2,7 @@
 __all__ = ['getPixelBarrelCfg']
 
 from GaugiKernel.constants import m,cm,mm
-from geometry.PhysicalVolume import PhysicalVolume, Plates, ProductionCuts
+from .PhysicalVolume import PhysicalVolume, Plates, ProductionCuts
 
 
 

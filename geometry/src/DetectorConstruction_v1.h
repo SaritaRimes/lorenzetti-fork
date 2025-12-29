@@ -1,5 +1,5 @@
-#ifndef DetectorConstruction_h
-#define DetectorConstruction_h
+#ifndef DetectorConstruction_v1_h
+#define DetectorConstruction_v1_h
 
 #include "GaugiKernel/MsgStream.h"
 #include "GaugiKernel/Property.h"
@@ -20,7 +20,7 @@ class G4VPhysicalVolume;
 
 class G4GlobalMagFieldMessenger;
 
-class DetectorConstruction : public G4VUserDetectorConstruction, public MsgService, public Gaugi::PropertyService
+class DetectorConstruction_v1 : public G4VUserDetectorConstruction, public MsgService, public Gaugi::PropertyService
 {
   public:
 
@@ -46,8 +46,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction, public MsgServi
       double photonCut;
     };
 
-    DetectorConstruction(std::string);
-    virtual ~DetectorConstruction();
+    DetectorConstruction_v1(std::string);
+    virtual ~DetectorConstruction_v1();
     virtual G4VPhysicalVolume* Construct();
     virtual void ConstructSDandField();
 

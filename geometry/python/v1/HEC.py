@@ -6,9 +6,9 @@ __all__ = ["getHECCfg"]
 from GaugiKernel.constants import mm,MeV,pi
 from CaloCell.CaloDefs import Detector, CaloSampling
 
-from geometry.Calorimeter import Calorimeter
-from geometry.PhysicalVolume import PhysicalVolume, Plates
-from geometry.SensitiveDetector import SensitiveDetector
+from .Calorimeter import Calorimeter
+from .PhysicalVolume import PhysicalVolume, Plates
+from .SensitiveDetector import SensitiveDetector
 
 import os
 
