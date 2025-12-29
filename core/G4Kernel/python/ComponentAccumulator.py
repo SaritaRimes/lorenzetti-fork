@@ -4,7 +4,6 @@ __all__ = ["ComponentAccumulator"]
 from GaugiKernel import Cpp, LoggingLevel
 from GaugiKernel.constants import MINUTES
 from G4Kernel import EventReader
-from geometry import DetectorConstruction
 import os
 import time
 import gc
@@ -18,8 +17,8 @@ class ComponentAccumulator(Cpp):
     """
 
     def __init__(self, 
-                 name : str, 
-                 detector : DetectorConstruction,
+                 name, 
+                 detector,
                  OutputFile: str = "output.root",
                  Seed: int = 512,
                  NumberOfThreads: int = 1,

@@ -107,7 +107,6 @@ add_subdirectory( generator/filters )
 add_subdirectory( generator/evtgen )
 
 
-add_subdirectory( scripts )
 
 
 
