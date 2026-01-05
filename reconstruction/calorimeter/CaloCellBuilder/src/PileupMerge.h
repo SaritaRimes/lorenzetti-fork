@@ -6,7 +6,7 @@
 #include "CaloHit/CaloHitContainer.h"
 #include "EventInfo/EventInfoContainer.h"
 #include "TruthParticle/TruthParticleContainer.h"
-//#include "CaloHit/CaloHitConverter.h"
+#include "CaloHit/CaloHitConverter.h"
 //#include "EventInfo/EventInfoConverter.h"
 #include "TRandom3.h"
 
@@ -41,9 +41,16 @@ class PileupMerge : public Gaugi::Algorithm
  
 
 
-    template <class T> void InitBranch(TTree* fChain, std::string branch_name, T* param) const;
+    template <class T> TBranch* InitBranch(TTree* fChain, std::string branch_name, T* param) const;
     int poisson(double nAvg) const;
     void Read( SG::EventContext &ctx, const std::vector<std::string> &paths, std::string name ) const;
+
+
+    void allocate( SG::ReadHandle<xAOD::CaloHitContainer> &container , std::vector<xAOD::CaloHit*> &vec_hits ) const;
+    void deallocate( std::vector<xAOD::CaloHit*> &vec_hits ) const;
+    float merge( SG::EventContext &ctx, std::vector<xAOD::CaloHit*> &vec_hits ) const;
+
+
 
     std::string m_inputHitsKey;
     std::string m_outputHitsKey;
@@ -55,6 +62,7 @@ class PileupMerge : public Gaugi::Algorithm
     float m_pileupAvg;
     float m_pileupSigma;
     float m_seed;
+    int   m_maxRetry;
     float m_trunc_mu;
     /*! The start bunch crossing id for energy estimation */
     int m_bcid_start;
@@ -64,6 +72,8 @@ class PileupMerge : public Gaugi::Algorithm
     std::vector<std::string> m_lowPileupInputFiles;
     std::vector<std::string> m_highPileupInputFiles;
     std::string m_ntupleName;
+
+
 
 };
 

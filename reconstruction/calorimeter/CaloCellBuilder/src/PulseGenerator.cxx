@@ -4,6 +4,7 @@
 #include "Randomize.hh"
 #include "TRandom.h"
 
+
 using namespace Gaugi;
 
 
@@ -50,7 +51,7 @@ StatusCode PulseGenerator::finalize()
 
 //!=====================================================================
 
-StatusCode PulseGenerator::execute( SG::EventContext &/*ctx*/, Gaugi::EDM *edm ) const
+StatusCode PulseGenerator::execute( SG::EventContext &ctx, Gaugi::EDM *edm ) const
 {
   auto *cell = static_cast<xAOD::CaloDetDescriptor*>(edm);
 
@@ -76,11 +77,9 @@ StatusCode PulseGenerator::execute( SG::EventContext &/*ctx*/, Gaugi::EDM *edm )
   // Add gaussian noise
   AddGaussianNoise(pulse_sum, m_noiseMean, m_noiseStd);
 
-
   // Add the integrated pulse centered in the bunch crossing zero
   cell->setPulse( pulse_sum );
   cell->setSigma( m_noiseStd );
-
 
   return StatusCode::SUCCESS;
 }

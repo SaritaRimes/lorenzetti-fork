@@ -62,6 +62,9 @@ class RootStreamHITMaker : public Gaugi::Algorithm
     float m_phiWindow;
     bool m_onlyRoI;
 
+    // new for including cell defects
+    std::vector<int> m_cellHashes;
+
     int m_outputLevel;
 };
 

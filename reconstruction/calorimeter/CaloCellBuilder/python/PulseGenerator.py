@@ -1,12 +1,14 @@
 
 __all__ = ["PulseGenerator"]
 
+
+import ROOT
+from typing import List
 from GaugiKernel import Cpp, LoggingLevel
 from GaugiKernel.macros import *
-import ROOT
+
 
 class PulseGenerator( Cpp ):
-
 
   def __init__( self, name      : str,
                 OutputLevel     : int=LoggingLevel.toC('INFO'), 
@@ -18,7 +20,7 @@ class PulseGenerator( Cpp ):
                 NoiseMean       : float=0,
                 NoiseStd        : float=0,
                 SamplingRate    : float=0,
-                StartSamplingBC : float=0
+                StartSamplingBC : float=0,
               ):
                 
     Cpp.__init__(self, ROOT.PulseGenerator(name) )
@@ -34,6 +36,5 @@ class PulseGenerator( Cpp ):
     self.setProperty( "StartSamplingBC" , StartSamplingBC   )
 
 
- 
      
 

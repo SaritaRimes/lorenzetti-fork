@@ -117,14 +117,14 @@ def run(args):
     if args.low_pileup_files.is_dir():
         args.low_pileup_files = expand_folders(os.path.abspath(args.low_pileup_files))
     else:
-        args.low_pileup_files = [args.low_pileup_files]
+        args.low_pileup_files = [os.path.abspath(args.low_pileup_files)]
    
     if not args.high_pileup_files.exists():
         raise FileNotFoundError(f"High Pileup input files {args.high_pileup_files} not found.")
     if args.high_pileup_files.is_dir():
         args.high_pileup_files = expand_folders(os.path.abspath(args.high_pileup_files))
     else:
-        args.high_pileup_files = [args.high_pileup_files]
+        args.high_pileup_files = [os.path.abspath(args.high_pileup_files)]
 
     pool = create_parallel_job(args)
     pool( main, 

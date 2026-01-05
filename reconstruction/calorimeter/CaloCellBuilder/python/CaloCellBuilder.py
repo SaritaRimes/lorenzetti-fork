@@ -4,13 +4,14 @@ __all__ = ["CaloCellBuilder"]
 from GaugiKernel        import Logger, LoggingLevel
 from GaugiKernel.macros import *
 
-from CaloCell           import CaloSampling
+from CaloCell           import CaloSampling, Detector
 from CaloCellBuilder    import CaloCellMaker
 from CaloCellBuilder    import CaloCellMerge
 from CaloCellBuilder    import CrossTalkMaker
 from CaloCellBuilder    import PulseGenerator
-from CaloCellBuilder    import OptimalFilter
-from CaloCellBuilder    import CaloFlags
+from CaloCellBuilder    import AnomalyGenerator
+from CaloCellBuilder    import OptimalFilter, ConstrainedOptimalFilter
+from CaloCellBuilder    import CaloFlags, CrossTalkFlags, AnomalyFlags
 
 #
 # Calo cell builder
@@ -18,19 +19,22 @@ from CaloCellBuilder    import CaloFlags
 class CaloCellBuilder( Logger ):
 
 
-  def __init__( self, name, detector,
+  def __init__( self, name, 
+                      detector,
                       HistogramPath        = "Expert", 
                       InputHitsKey         = "Hits",
                       OutputCellsKey       = "Cells",
                       OutputTruthCellsKey  = "TruthCells",
+                      InputEventKey        = "Events",
                       OutputLevel          = LoggingLevel.toC('INFO'),
                       ):
 
-    Logger.__init__(self)
+    Logger.__init__(self, name)
     self.__recoAlgs = []
     self.HistogramPath       = HistogramPath
     self.OutputLevel         = OutputLevel
     self.InputHitsKey        = InputHitsKey
+    self.InputEventKey       = InputEventKey
     self.OutputCellsKey      = OutputCellsKey
     self.OutputTruthCellsKey = OutputTruthCellsKey
     self.Detector            = detector
@@ -45,7 +49,7 @@ class CaloCellBuilder( Logger ):
 
       DoCrosstalk = True if CaloFlags.DoCrossTalk and (samp.Sampling == CaloSampling.EMEC2 or samp.Sampling == CaloSampling.EMB2) else False
 
-
+      print('sampling noise: ', samp.Noise)
 
       MSG_INFO(self, "Create new CaloCellMaker and dump all cells into %s collection", samp.CollectionKey)
       pulse = PulseGenerator( "PulseGenerator", 
@@ -58,10 +62,19 @@ class CaloCellBuilder( Logger ):
                               DeformationStd  = 0.0,
                               NoiseMean       = 0.0,
                               NoiseStd        = samp.Noise,
-                              StartSamplingBC = samp.StartSamplingBC )
+                              StartSamplingBC = samp.StartSamplingBC, 
+                              )
      
-
-      of= OptimalFilter("OptimalFilter",
+      if CaloFlags.DoCOF and samp.Detector == Detector.TILE: 
+        of = ConstrainedOptimalFilter("ConstrainedOptimalFiler",
+                                      NSamples  = samp.Samples,
+                                      PulsePath = samp.Shaper,
+                                      Threshold = 0,
+                                      SamplingRate = 25.0,
+                                      StartSamplingBC = samp.StartSamplingBC,
+                                      )
+      else:
+        of= OptimalFilter("OptimalFilter",
                         WeightsEnergy  = samp.OFWeightsEnergy,
                         WeightsTime    = samp.OFWeightsTime,
                         OutputLevel=self.OutputLevel)
@@ -78,7 +91,18 @@ class CaloCellBuilder( Logger ):
                             )
   
       alg.PulseGenerator = pulse # for all cell
-      alg.Tools = [of] # for each cel
+      
+      if CaloFlags.DoDefects:
+          anomaly = AnomalyGenerator( "AnomalyGenerator_" + samp.CollectionKey,
+                                     InputEventKey = self.InputEventKey,
+                                     NoiseMean = pulse.NoiseMean,
+                                     NoiseStd = pulse.NoiseStd,
+                                     BadRunListFile = AnomalyFlags.BadRunListFile)
+          alg.Tools.append(anomaly) # for each cel
+      
+      alg.Tools.append( of )  # for each cell
+      
+      
       self.__recoAlgs.append( alg )
 
 
@@ -86,10 +110,10 @@ class CaloCellBuilder( Logger ):
           cx = CrossTalkMaker( "CrossTalkMaker_" + samp.CollectionKey,
                                 InputCollectionKey    = samp.CollectionKey + "_Aux",
                                 OutputCollectionKey   = samp.CollectionKey,
-                                MinEnergy             = CaloFlags.XTMinEnergy,
-                                XTAmpCapacitive       = CaloFlags.XTAmpCapacitive,
-                                XTAmpInductive        = CaloFlags.XTAmpInductive,
-                                XTAmpResistive        = CaloFlags.XTAmpResistive,
+                                MinEnergy             = CrossTalkFlags.MinEnergy,
+                                AmpCapacitive         = CaloFlags.AmpCapacitive,
+                                AmpInductive          = CaloFlags.AmpInductive,
+                                AmpResistive          = CaloFlags.AmpResistive,
                                 HistogramPath         = self.HistogramPath + '/CrossTalk',
                                 OutputLevel           = self.OutputLevel
                              )

@@ -1,7 +1,10 @@
 [![DOI](https://zenodo.org/badge/370090835.svg)](https://zenodo.org/badge/latestdoi/370090835)
-[![test](https://github.com/lorenzetti-hep/lorenzetti/actions/workflows/test_sequence.yml/badge.svg)](https://github.com/lorenzetti-hep/lorenzetti/actions/workflows/test_sequence.yml)
+[![pages](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/pages.yml/badge.svg)](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/pages.yml)
+[![reco](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/reco_sequence.yml/badge.svg)](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/reco_sequence.yml)
+[![anomaly](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/anomaly_sequence.yml/badge.svg)](https://github.com/lorenzetti-ufrj-br/lorenzetti/actions/workflows/anomaly_sequence.yml)
+[![maestro](https://github.com/lps-ufrj-br/maestro-lightning/actions/workflows/flow.yml/badge.svg)](https://github.com/lps-ufrj-br/maestro-lighning/actions/workflows/flow.yml)
 
-# Lorenzetti Simulator
+# Lorenzetti Simulator 
 
 Lorenzetti is a framework for the HEP community to freely exploit the full potential of calorimetry data. We expect to enable the community to mitigate bottlenecks for R&D in processing algorithms using calorimetry data by providing:
 
@@ -20,24 +23,33 @@ Please cite [![DOI](https://zenodo.org/badge/370090835.svg)](https://zenodo.org/
 [//]: # (and/or the applicable papers.)
 
 
-## Detector Construction:
+## Manual:
+
+- [Installation](docs/installation.md)
+- [Usage](docs/usage.html)
+- [Particle Generators](docs/generation.html)
+- [Anomaly Injection Tutorial](docs/anomaly.html)
+
+## Web Pages:
+
+ - [WebPage](https://sites.google.com/lps.ufrj.br/lorenzetti/início?authuser=0)
+ - [DocPage](https://lorenzetti-ufrj-br.github.io/lorenzetti/)
+
+## Detector Construction (version 1):
 
 The standard detector in the Lorenzetti framework consist in a eletromagnetic calorimeter and a hadronic calorimeter using a cylinder shape. Each one has 3 layers with different granularities to capture the shower develop by the particles. Also, between regions, there is a small slice of dead material.
 
 
-![Screenshot](geometry/ATLAS/doc/cut_view.png)
+![Screenshot](geometry/doc/cut_view.png)
 
 It is possible, by using Geant4 modules to change the geometry, the layers and the cell granularity, allowing a high level of customization of the full detector.
 
-## Manual:
+![Screenshot](geometry/doc/front_view.png)
 
-- [Getting Started](docs/Getting_Started.md)
-- [Reconstruction](docs/Reconstruction.md)
-- [Visualization](docs/Visualization.md)
+
 
 
 ## Software considerations:
-
 
 Lorenzetti is built on top of standard simulation technology employed on HEP experiments ([Pythia](http://home.thep.lu.se/~torbjorn/Pythia.html) and [Geant](https://geant4.web.cern.ch)). Lorenzetti's concept design was greatly inspired in the [Athena framework](https://gitlab.cern.ch/atlas/athena). Other frameworks of potential interest:
 
