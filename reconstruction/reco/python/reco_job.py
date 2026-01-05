@@ -87,10 +87,10 @@ class Parallel:
         self.number_of_events  = number_of_events
         self.number_of_threads = number_of_threads
         self.events_per_job    = events_per_job
-        self.merge_files       =  merge
-        self.ntuple_name = ntuple_name
-        self.output_file = output_file
-        self.overwrite=overwrite
+        self.merge_files       = merge
+        self.ntuple_name       = ntuple_name
+        self.output_file       = output_file
+        self.overwrite         = overwrite
 
 
     def build_plan(self) -> Dict:
@@ -104,6 +104,9 @@ class Parallel:
                     d[key_a][key_b] = {"input_file":value_a, "evt":[value_b]}
             else:
                 d[key_a] = {key_b:{"input_file":value_a, "evt":[value_b]}}
+
+        if isinstance(self.files, list) and isinstance(self.files[0], Path):
+            self.files = [str(inp) for inp in self.files]
 
         nov = 0
         print(self.files)

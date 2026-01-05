@@ -53,7 +53,15 @@ StatusCode ShowerShapes::execute( SG::EventContext &/*ctx*/, Gaugi::EDM *edm ) c
   float ehad1 = sumEnergyHAD( clus, 0 );
   float ehad2 = sumEnergyHAD( clus, 1 );
   float ehad3 = sumEnergyHAD( clus, 2 );
-  float weta2 = calculateWeta2(clus, 3, 5);
+  float weta2 = calculateWeta2( clus, 3, 5 );
+  // distance in eta and phi between the energy weighted cluster centroid and the hottest cell
+  float detaCentHotCell = calculateDetaEnergeticCentroidHotCell( clus );
+  float dphiCentHotCell = calculateDphiEnergeticCentroidHotCell( clus );
+  // distance in eta and phi between the energy weighted cluster centroid and the cell where it is located
+  float detaCentCell = calculateDetaEnergeticCentroidCell( clus );
+  float dphiCentCell = calculateDphiEnergeticCentroidCell( clus );
+
+  float tofClus = calculateClusterTof( clus );
 
   float etot = e0+e1+e2+e3+ehad1+ehad2+ehad3;
   float emtot = e0+e1+e2+e3;
@@ -64,6 +72,7 @@ StatusCode ShowerShapes::execute( SG::EventContext &/*ctx*/, Gaugi::EDM *edm ) c
   float f3 = e3 / emtot;
   float rhad = (ehad1+ehad2+ehad3) / emtot;
   float rhad1 = (ehad1) / emtot;
+
   clus->setE0( e0 );
   clus->setE1( e1 );
   clus->setE2( e2 );
@@ -78,6 +87,11 @@ StatusCode ShowerShapes::execute( SG::EventContext &/*ctx*/, Gaugi::EDM *edm ) c
   clus->setReta( reta );
   clus->setRphi( rphi );
   clus->setWeta2( weta2 );
+  clus->setDetaCentHotCell( detaCentHotCell );
+  clus->setDphiCentHotCell( dphiCentHotCell );
+  clus->setDetaCentCell( detaCentCell );
+  clus->setDphiCentCell( dphiCentCell );
+  clus->setTofClus( tofClus );
   // Eratio for strip em layer (EM1)
   clus->setEratio( eratio );
   // Extra eratio information for each sampling layer
@@ -437,4 +451,300 @@ float ShowerShapes::calculateLongitudinalMom ( xAOD::CaloCluster *clus, std::vec
   	}
     longitudinalMom = l_2/(l_2+l_max);
   	return longitudinalMom;
+}
+//!=====================================================================
+float ShowerShapes::calculateDetaEnergeticCentroidHotCell( xAOD::CaloCluster *clus ) const{
+  float sumEtaEnergy = 0, sumEnergy = 0;
+  float etaMostEnergCell = 0, eMostEnergCell = -1;
+
+  // Estimating the eta coordinate of the energetic centroid
+  for(auto& cell : clus->cells()) {
+    float energy = cell->e();
+
+    if(energy < 50) continue;
+
+    float eta = cell->eta();
+
+    sumEtaEnergy += eta * energy;
+    sumEnergy += energy;
+
+    if(energy > eMostEnergCell) {
+      etaMostEnergCell = eta;
+      eMostEnergCell = energy;
+    }    
+  }
+
+  if(sumEnergy == 0) {
+    std::cerr << "Warning: sum of energy is zero." << std::endl;
+  }
+
+  float etaCent = sumEtaEnergy/sumEnergy;
+  float detaCentHotCell = etaCent - etaMostEnergCell;
+  
+  return detaCentHotCell;
+}
+//!=====================================================================
+float ShowerShapes::calculateDetaEnergeticCentroidCell( xAOD::CaloCluster *clus ) const{
+  float sumEtaEnergy = 0, sumEnergy = 0;
+  
+  // Estimating the eta coordinate of the energetic centroid
+  for(auto& cell : clus->cells()) {
+    float energy = cell->e();
+
+    if(energy < 50) continue;
+
+    float eta = cell->eta();
+
+    sumEtaEnergy += eta * energy;
+    sumEnergy += energy;
+  }
+
+  if(sumEnergy == 0) {
+    std::cerr << "Warning: sum of energy is zero." << std::endl;
+  }
+
+  float etaCent = sumEtaEnergy/sumEnergy;
+
+  // Finding the cell where the centroid is located
+  float etaCellCentroid;
+  for(auto& cell : clus->cells()) {
+    float eta = cell->eta();
+    float deta = cell->deltaEta();
+
+    if(std::fabs(etaCent - eta) <= deta/2) {
+      etaCellCentroid = eta;
+      break;
+    }
+  }
+
+  float detaCentCell = etaCent - etaCellCentroid;
+  
+  return detaCentCell;
+}
+//!=====================================================================
+float ShowerShapes::calculateDphiEnergeticCentroidHotCell( xAOD::CaloCluster *clus ) const{
+  const float pi = 3.141593, threshold = 5*0.025 /* approx pi/25 */; 
+  
+  // Checking if there are cells in the phi transition region (-pi, +pi)
+  float phiMin = 3.5; // higher than pi
+  float phiMax = -3.5; // smaller than -pi
+  for(auto& cell : clus->cells()) {
+    float phi = CaloPhiRange::fix(cell->phi());
+    
+    if(phi < phiMin) { phiMin = phi; }
+    if(phi > phiMax) { phiMax = phi; }
+  }
+  
+  bool inTransitionRegion = std::fabs(phiMax - phiMin) > (2*pi - threshold);
+
+  // Estimating the phi coordinate of the energetic centroid
+  float phiMostEnergCell = 0, eMostEnergCell = -1;
+  float phiCent; 
+  if(inTransitionRegion) { // if it is the transition region
+    float sumPhiEnergyPos = 0, sumPhiEnergyNeg = 0;
+    float sumEnergyPos = 0, sumEnergyNeg = 0;
+
+    for(auto& cell : clus->cells()) {
+      float energy = cell->e();
+
+      if(energy < 50) continue;
+
+      float phi = CaloPhiRange::fix(cell->phi());
+
+      if(phi >= 0) {
+        sumPhiEnergyPos += phi * energy;
+        sumEnergyPos += energy;
+      } else {
+        sumPhiEnergyNeg += phi * energy; 
+        sumEnergyNeg += energy;
+      }
+
+      if(energy > eMostEnergCell) {
+        phiMostEnergCell = phi;
+        eMostEnergCell = energy;
+      }
+    }
+
+    if(sumEnergyPos == 0) {
+      std::cerr << "Warning: sum of energy in the positive side of phi is zero." << std::endl;
+    }
+
+    if(sumEnergyNeg == 0) {
+      std::cerr << "Warning: sum of energy in the negativa side of phi is zero." << std::endl;
+    }
+
+    // Estimating the weighted centroid for both positive and negative part
+    float phiCentPos = CaloPhiRange::fix(sumPhiEnergyPos/sumEnergyPos);
+    float phiCentNeg = CaloPhiRange::fix(sumPhiEnergyNeg/sumEnergyNeg);
+
+    // Calculating the phi of the centroid using the barycenter and considering phi_neg was 0
+    float epsilonPos = CaloPhiRange::fix(pi - phiCentPos);
+    float epsilonNeg = CaloPhiRange::fix(phiCentNeg + pi);
+    phiCent = CaloPhiRange::fix(((epsilonPos + epsilonNeg) * (sumEnergyPos/(sumEnergyPos + sumEnergyNeg))) + phiCentNeg);
+
+  } else { // If it is not the transition region
+    float sumPhiEnergy = 0, sumEnergy = 0;
+
+    for(auto& cell : clus->cells()) {
+      float energy = cell->e();
+
+      if(energy < 50) continue;
+
+      float phi = CaloPhiRange::fix(cell->phi());
+
+      sumPhiEnergy += phi * energy;
+      sumEnergy += energy;
+
+      if(energy > eMostEnergCell) {
+        phiMostEnergCell = phi;
+        eMostEnergCell = energy;
+      }
+    }
+
+    if(sumEnergy == 0) {
+      std::cerr << "Warning: sum of energy is zero." << std::endl;
+    }
+
+    phiCent = CaloPhiRange::fix(sumPhiEnergy/sumEnergy);
+  }
+  
+  float dphiCentHotCell = CaloPhiRange::diff(phiCent, phiMostEnergCell);
+
+  return dphiCentHotCell;
+}
+// !=====================================================================
+float ShowerShapes::calculateDphiEnergeticCentroidCell( xAOD::CaloCluster *clus ) const{
+  const float pi = 3.141593, threshold = 5*0.025 /* approx pi/25 */, dphiTile2 = 0.025; 
+  
+  // Checking if there are cells in the phi transition region (-pi, +pi)
+  float phiMin = 3.5; // higher than pi
+  float phiMax = -3.5; // smaller than -pi
+  for(auto& cell : clus->cells()) {
+    float phi = CaloPhiRange::fix(cell->phi());
+    
+    if(phi < phiMin) { phiMin = phi; }
+    if(phi > phiMax) { phiMax = phi; }
+  }
+  
+  bool inTransitionRegion = std::fabs(phiMax - phiMin) > (2*pi - threshold);
+
+  // Estimating the phi coordinate of the energetic centroid
+  float phiCent; 
+  if(inTransitionRegion) { // If it is the transition region
+    float sumPhiEnergyPos = 0, sumPhiEnergyNeg = 0;
+    float sumEnergyPos = 0, sumEnergyNeg = 0;
+
+    for(auto& cell : clus->cells()) {
+      float energy = cell->e();
+
+      if(energy < 50) continue;
+
+      float phi = CaloPhiRange::fix(cell->phi());
+
+      if(phi >= 0) {
+        sumPhiEnergyPos += phi * energy;
+        sumEnergyPos += energy;
+      } else {
+        sumPhiEnergyNeg += phi * energy; 
+        sumEnergyNeg += energy;
+      }
+    }
+
+    if(sumEnergyPos == 0) {
+      std::cerr << "Warning: sum of energy in the positive side of phi is zero." << std::endl;
+    }
+
+    if(sumEnergyNeg == 0) {
+      std::cerr << "Warning: sum of energy in the negativa side of phi is zero." << std::endl;
+    }
+
+    // Estimating the weighted centroid for both positive and negative part
+    float phiCentPos = CaloPhiRange::fix(sumPhiEnergyPos/sumEnergyPos);
+    float phiCentNeg = CaloPhiRange::fix(sumPhiEnergyNeg/sumEnergyNeg);
+
+    // Calculating the phi of the centroid using the barycenter and considering phi_neg was 0
+    float epsilonPos = CaloPhiRange::fix(pi - phiCentPos);
+    float epsilonNeg = CaloPhiRange::fix(phiCentNeg + pi);
+    phiCent = CaloPhiRange::fix(((epsilonPos + epsilonNeg) * (sumEnergyPos/(sumEnergyPos + sumEnergyNeg))) + phiCentNeg);
+
+  } else { // If it is not the transition region
+    float sumPhiEnergy = 0, sumEnergy = 0;
+
+    for(auto& cell : clus->cells()) {
+      float energy = cell->e();
+
+      if(energy < 50) continue;
+
+      float phi = CaloPhiRange::fix(cell->phi());
+
+      sumPhiEnergy += phi * energy;
+      sumEnergy += energy;
+    }
+
+    if(sumEnergy == 0) {
+      std::cerr << "Warning: sum of energy is zero." << std::endl;
+    }
+
+    phiCent = CaloPhiRange::fix(sumPhiEnergy/sumEnergy);
+  }
+
+  // Finding the cell where the centroid is located
+  float phiCellCentroid;
+  int numberCellCentroid;
+  if(phiCent >= 0) {
+    numberCellCentroid = (int)((pi - phiCent)/dphiTile2);
+    phiCellCentroid = pi - (numberCellCentroid * dphiTile2) - (dphiTile2/2);
+  } else {
+    numberCellCentroid = (int)((phiCent - (-pi))/dphiTile2);
+    phiCellCentroid = -pi + (numberCellCentroid * dphiTile2) + (dphiTile2/2); 
+  }
+  
+  float dphiCentCell = CaloPhiRange::diff(phiCent, phiCellCentroid);
+
+  return dphiCentCell;
+}
+// !=====================================================================
+float ShowerShapes::calculateClusterTof( xAOD::CaloCluster *clus ) const {
+  std::ofstream file("test_tof.csv");
+
+  for(auto& cell : clus->cells()) {
+    std::cout << "\n\n----- Inicia celula -----" << std::endl;
+    
+    // retrieving descriptor information from the cell
+    const xAOD::CaloDetDescriptor* descri = cell->descriptor();
+
+    int bcid_start = descri->bcid_start();
+    int bcid_end = descri->bcid_end();
+
+    for(int i = bcid_start; i <= bcid_end ; i++){
+      std::cout << i << ", ";
+    }
+    std::cout << std::endl;
+
+    file << descri->hash() << ", ";
+    for(int i = bcid_start; i <= bcid_end ; i++){
+      std::cout << "tof(" << i << "): " << descri->tof(i) << ", ";
+      std::cout << "hash: " << descri->hash() << ", ";
+      std::cout << "eta: " << descri->eta() << ", ";
+      std::cout << "phi: " << descri->phi() << std::endl;
+
+      file << descri->tof(i);
+      if(i != bcid_end) file << ", ";
+    }
+    file << "\n";
+
+    // tentar salvar dados de tof no csv pra plotar
+
+    // auto tof = cell->descriptor()->tof(-8);
+
+
+    // std::cout << "\ntof: " << tof << std::endl;
+    // Encontrar link entre a celula do objeto CaloCell e a do objeto CaloDetDescriptor
+    // Preciso identificar quais células do Descriptor estão no cluster de entrada
+    // O CaloDetDescriptor tem um hash e o CaloCell tem um descriptor_link, a partir deles da pra mapear 
+      // as celulas, pois os numeros sao os mesmos nos dois, ligando a celula em questao
+      
+    std::cout << "----- Finaliza celula -----" << std::endl;
+  }
+  file.close();
 }

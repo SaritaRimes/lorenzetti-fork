@@ -34,7 +34,7 @@ namespace xAOD{
       PRIMITIVE_SETTER_AND_GETTER( float, m_e, setE, e );
       /*! Tranverse energy */
       PRIMITIVE_SETTER_AND_GETTER( float, m_et, setEt, et );
-     /*! Cell time delay of the pulse (Time of flight) **/
+      /*! Cell time delay of the pulse (Time of flight) **/
       PRIMITIVE_SETTER_AND_GETTER( float, m_tau, setTau, tau );
 
 

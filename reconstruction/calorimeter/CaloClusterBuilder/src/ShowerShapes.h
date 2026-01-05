@@ -34,6 +34,11 @@ class ShowerShapes : public Gaugi::AlgTool
     float calculateFracMax(xAOD::CaloCluster *, std::vector<TVector3>) const;
     float calculateLateralMom(xAOD::CaloCluster *, std::vector<TVector3>) const;
     float calculateLongitudinalMom(xAOD::CaloCluster *, std::vector<TVector3>) const;
+    float calculateDetaEnergeticCentroidHotCell(xAOD::CaloCluster *) const;
+    float calculateDphiEnergeticCentroidHotCell(xAOD::CaloCluster *) const;
+    float calculateDetaEnergeticCentroidCell(xAOD::CaloCluster *) const;
+    float calculateDphiEnergeticCentroidCell(xAOD::CaloCluster *) const;
+    float calculateClusterTof(xAOD::CaloCluster *) const;
 
     std::vector<TVector3> calculateShowerAxis(xAOD::CaloCluster *) const;
 

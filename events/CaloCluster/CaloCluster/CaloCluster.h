@@ -95,8 +95,16 @@ namespace xAOD{
 	    PRIMITIVE_SETTER_AND_GETTER( float, m_lateralMom, setLateralMom, lateralMom );
 
 	    PRIMITIVE_SETTER_AND_GETTER( float, m_longitudinalMom, setLongitudinalMom, longitudinalMom );
-	  
-
+      /*! The distance in eta between the energy weighted centroid and the hottest cell */
+      PRIMITIVE_SETTER_AND_GETTER( float, m_detaCentHotCell, setDetaCentHotCell, detaCentHotCell );
+      /*! The distance in phi between the energy weighted centroid and the hottest cell */
+      PRIMITIVE_SETTER_AND_GETTER( float, m_dphiCentHotCell, setDphiCentHotCell, dphiCentHotCell );
+      /*! The distance in eta between the energy weighted centroid and the cell where it is located */
+      PRIMITIVE_SETTER_AND_GETTER( float, m_detaCentCell, setDetaCentCell, detaCentCell );
+      /*! The distance in phi between the energy weighted centroid and the cell where it is located */
+      PRIMITIVE_SETTER_AND_GETTER( float, m_dphiCentCell, setDphiCentCell, dphiCentCell );
+      /*! Time of Flight associated to the cluster */
+      PRIMITIVE_SETTER_AND_GETTER( float, m_tofClus, setTofClus, tofClus );
 
 
       /*! Add the calorimeter cell into the RoI collection */
@@ -153,6 +161,12 @@ namespace xAOD{
 	    float m_lateralMom;
 	    float m_longitudinalMom;
 
+      float m_detaCentHotCell;
+      float m_dphiCentHotCell;
+      float m_detaCentCell;
+      float m_dphiCentCell;
+
+      float m_tofClus;
 
       /* All calo cells into the roi window */
       std::vector<const xAOD::CaloCell*> m_container;

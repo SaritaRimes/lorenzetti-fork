@@ -41,6 +41,11 @@ bool CaloClusterConverter::convert( const CaloCluster *clus, CaloCluster_t &clus
 	    clus_t.fracMax     = clus->fracMax();
 	    clus_t.lateralMom  = clus->lateralMom();
 	    clus_t.longitudinalMom = clus->longitudinalMom();
+      clus_t.detaCentHotCell = clus->detaCentHotCell();
+      clus_t.dphiCentHotCell = clus->dphiCentHotCell();
+      clus_t.detaCentCell = clus->detaCentCell();
+      clus_t.dphiCentCell = clus->dphiCentCell();
+      clus_t.tofClus = clus->tofClus();
       clus_t.seed_link   = clus->seed()->id();
 
       for(auto &cell : clus->cells())
@@ -89,6 +94,12 @@ bool CaloClusterConverter::convert( const CaloCluster_t &cluster_t, CaloCluster 
   cluster->setSecondLambda(cluster_t.secondLambda);
   cluster->setFracMax(cluster_t.fracMax);
   cluster->setLateralMom(cluster_t.lateralMom);
-  cluster->setLongitudinalMom(cluster_t.longitudinalMom);    
+  cluster->setLongitudinalMom(cluster_t.longitudinalMom);
+  cluster->setDetaCentHotCell(cluster_t.detaCentHotCell);
+  cluster->setDphiCentHotCell(cluster_t.dphiCentHotCell);
+  cluster->setDetaCentCell(cluster_t.detaCentCell);
+  cluster->setDphiCentCell(cluster_t.dphiCentCell);
+  cluster->setTofClus(cluster_t.tofClus);
+
   return true;
 }

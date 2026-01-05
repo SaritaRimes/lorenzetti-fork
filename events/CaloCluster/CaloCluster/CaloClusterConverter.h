@@ -45,6 +45,11 @@ namespace xAOD{
   	  	float fracMax;
   	 	float lateralMom;
   	  	float longitudinalMom;
+        float detaCentHotCell;
+        float dphiCentHotCell;
+        float detaCentCell;
+        float dphiCentCell;
+        float tofClus;
         std::vector<unsigned long int> cell_links;
         int seed_link;
     };

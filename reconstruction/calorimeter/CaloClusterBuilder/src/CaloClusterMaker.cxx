@@ -58,7 +58,7 @@ StatusCode CaloClusterMaker::bookHistograms( SG::EventContext &ctx ) const
   auto store = ctx.getStoreGateSvc();
 
   store->mkdir( m_histPath );  
-  store->add( new TH1F("cl_e"   , ";Count;E_{T};"       , 100, 0.0  , 200 ) );
+  store->add( new TH1F("cl_e"    , ";Count;E_{T};"       , 100, 0.0  , 200 ) );
   store->add( new TH1F("cl_et"   , ";Count;E_{T};"       , 100, 0.0  , 200 ) );
   store->add( new TH1F("cl_eta"  , ";Count;#eta;"        , 100, -1.5 , 1.5 ) );
   store->add( new TH1F("cl_phi"  , ";Count;#phi;"        , 100, -3.2 , 3.2 ) );
@@ -69,6 +69,11 @@ StatusCode CaloClusterMaker::bookHistograms( SG::EventContext &ctx ) const
   store->add( new TH1F("cl_rphi" , ";Count;R_{#phi};"    , 200, 0.45 , 1.05) );
   store->add( new TH1F("cl_rhad" , ";Count;R_{had};"     , 200, -0.05, 0.05) );
   store->add( new TH1F("cl_eratio", ";Count;E_{ratio};"  , 100, 0.0  , 1.05) );
+  store->add( new TH1F("cl_detaCentHotCell", ";Count;#deta_{CentroidHotCell};", 100, -1.5, 1.5) );
+  store->add( new TH1F("cl_dphiCentHotCell", ";Count;#dphi_{CentroidHotCell};", 100, -3.2, 3.2) );
+  store->add( new TH1F("cl_detaCentCell", ";Count;#deta_{CentroidCell};", 100, -3.2, 3.2) );
+  store->add( new TH1F("cl_dphiCentCell", ";Count;#dphi_{CentroidCell};", 100, -3.2, 3.2) );
+  store->add( new TH1F("cl_tofClus", ";Count;#tof;", 100, -0.05, 0.05) );
   store->add( new TH1F("res_eta", "#eta_{Cluster}-#eta_{Truth};res_{#eta};Count",100,-1.5,1.5 ) );
   store->add( new TH1F("res_phi", "#phi_{Cluster}-#phi_{Truth};res_{#phi};Count",100,-1.5,1.5 ) );
   store->add( new TH1F("res_e"  , "E_{Cluster}-E_{Truth};res_{e} [MeV];Count",100,-10*GeV,10*GeV ) );
@@ -260,27 +265,37 @@ StatusCode CaloClusterMaker::fillHistograms(EventContext &ctx ) const
     store->hist1("cl_f1")->Fill( clus->f1() );
     store->hist1("cl_f3")->Fill( clus->f3() );
     store->hist1("cl_weta2")->Fill( clus->weta2() );
+    store->hist1("cl_detaCentHotCell")->Fill( clus->detaCentHotCell() );
+    store->hist1("cl_dphiCentHotCell")->Fill( clus->dphiCentHotCell() );
+    store->hist1("cl_detaCentCell")->Fill( clus->detaCentCell() );
+    store->hist1("cl_dphiCentCell")->Fill( clus->dphiCentCell() );
+    store->hist1("cl_tofClus")->Fill( clus->tofClus() );
 
 
 
     MSG_DEBUG( "Cluster information:" );
-    MSG_DEBUG( "Eta      : " << clus->eta()    );
-    MSG_DEBUG( "Phi      : " << clus->phi()    );
-    MSG_DEBUG( "Et       : " << clus->et()     );
-    MSG_DEBUG( "e1       : " << clus->e1()     );
-    MSG_DEBUG( "e2       : " << clus->e2()     );
-    MSG_DEBUG( "e3       : " << clus->e3()     );
-    MSG_DEBUG( "ehad1    : " << clus->ehad1()  );
-    MSG_DEBUG( "ehad2    : " << clus->ehad2()  );
-    MSG_DEBUG( "ehad3    : " << clus->ehad3()  );
-    MSG_DEBUG( "etot     : " << clus->etot()   );
-    MSG_DEBUG( "Reta     : " << clus->reta()   );
-    MSG_DEBUG( "Rphi     : " << clus->rphi()   );
-    MSG_DEBUG( "Rhad     : " << clus->rhad()   );
-    MSG_DEBUG( "Eratio   : " << clus->eratio() );
-    MSG_DEBUG( "f1       : " << clus->f1()     );
-    MSG_DEBUG( "f3       : " << clus->f3()     );
-    MSG_DEBUG( "Weta2    : " << clus->weta2()  );
+    MSG_DEBUG( "Eta             : " << clus->eta()            );
+    MSG_DEBUG( "Phi             : " << clus->phi()            );
+    MSG_DEBUG( "Et              : " << clus->et()             );
+    MSG_DEBUG( "e1              : " << clus->e1()             );
+    MSG_DEBUG( "e2              : " << clus->e2()             );
+    MSG_DEBUG( "e3              : " << clus->e3()             );
+    MSG_DEBUG( "ehad1           : " << clus->ehad1()          );
+    MSG_DEBUG( "ehad2           : " << clus->ehad2()          );
+    MSG_DEBUG( "ehad3           : " << clus->ehad3()          );
+    MSG_DEBUG( "etot            : " << clus->etot()           );
+    MSG_DEBUG( "Reta            : " << clus->reta()           );
+    MSG_DEBUG( "Rphi            : " << clus->rphi()           );
+    MSG_DEBUG( "Rhad            : " << clus->rhad()           );
+    MSG_DEBUG( "Eratio          : " << clus->eratio()         );
+    MSG_DEBUG( "f1              : " << clus->f1()             );
+    MSG_DEBUG( "f3              : " << clus->f3()             );
+    MSG_DEBUG( "Weta2           : " << clus->weta2()          );
+    MSG_DEBUG( "detaCentHotCell : " << clus->detaCentHotCell());
+    MSG_DEBUG( "dphiCentHotCell : " << clus->dphiCentHotCell());
+    MSG_DEBUG( "detaCentCell    : " << clus->detaCentCell()   );
+    MSG_DEBUG( "dphiCentCell    : " << clus->dphiCentCell()   );
+    MSG_DEBUG( "tofClus         : " << clus->tofClus()        );
     MSG_DEBUG("=================================================");
   }
 
